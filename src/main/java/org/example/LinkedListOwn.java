@@ -1,268 +1,249 @@
 package org.example;
 
+import java.util.Comparator;
+
 /**
  * LinkedList - own implementation LinkedList.
  * Methods include:
  * adding an element
  * adding an element by index
  * getting an element by index
- * remove element by key and by index
+ * deletion element by value and by index
  * clearing the collection
- * sort insertion
+ * sort list
  *
+ * @param <T> the type of elements stored in the list
  * @author OlegS
- *
  */
-
-public class LinkedListOwn {
-
-    /**
-     * Head of list
-     */
-    Node head;
+public class LinkedListOwn<T> {
+    private Node<T> head;
+    private Node<T> tail;
+    private int size;
 
     /**
-     *  Linked list Node. Node is a static nested class
-     */
-    static class Node {
-        int data;
-        Node next;
-
-        public Node(int d) {
-            data = d;
-            next = null;
-        }
-    }
-
-    /**
-     * Method to insert a new node
+     * Node class representing an element in the linked list.
      *
-     * @param list to which is added data
-     * @param data the int data to be added
+     * @param <T> the type of data stored in the node
      */
-    public static void add(LinkedListOwn list, int data) {
+    private static class Node<T> {
+        private T data;
+        private Node<T> next;
+        private Node<T> prev;
 
-        Node newNode = new Node(data);
-        newNode.next = null;
-
-        if (list.head == null) {
-            list.head = newNode;
-        } else {
-            Node last = list.head;
-            while (last.next != null) {
-                last = last.next;
-            }
-            last.next = newNode;
+        public Node(T element) {
+            data = element;
+            next = null;
+            prev = null;
         }
     }
 
     /**
-     * Adds a data for a specific index
-     * @param list to which is added data
-     * @param index index at which to add the data
-     * @param data the int data to be added
+     * Retrieves the node at the specified index.
+     *
+     * @param index the index of the node to retrieve
+     * @return the node at the specified index
+     * @throws IndexOutOfBoundsException if the index is out of bounds
      */
-    public static void addByIndex(LinkedListOwn list, int index, int data) {
-
-        Node newNode = new Node(data);
-
-        if (index == 0) {
-            newNode.next = list.head;
-            list.head = newNode;
-        } else {
-            Node currNode = list.head;
-            int currentIndex = 0;
-            while (currNode != null && currentIndex < index - 1) {
-                currNode = currNode.next;
-                currentIndex++;
-            }
-            if (currNode == null) {
-                System.out.println("is out of bounds for the list");
-            } else {
-                newNode.next = currNode.next;
-                currNode.next = newNode;
-            }
+    private Node<T> getNodeByIndex(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException();
         }
-    }
-
-    /**
-     * Returns the data at the specified index
-     * @param list to which is added data
-     * @param index index at which to add the data
-     * @return returns the data at this index
-     * @throws IndexOutOfBoundsException if the specified index is outside the valid range
-     */
-    public static int getElementAtIndex(LinkedListOwn list, int index) {
-
-        Node currNode = list.head;
-        int currIndex = 0;
-
-        while (currNode != null) {
-            if (currIndex == index) {
-                return currNode.data;
-            }
-            currNode = currNode.next;
-            currIndex++;
-        }
-        throw new IndexOutOfBoundsException();
-    }
-
-    /**
-     * Displays a list
-     * @param list will be displayed on screen
-     */
-    public static void printList(LinkedListOwn list) {
-        Node currNode = list.head;
-        System.out.print("LinkedList: ");
-        while (currNode != null) {
-            System.out.print(currNode.data + " ");
+        Node<T> currNode = head;
+        for (int i = 0; i < index; i++) {
             currNode = currNode.next;
         }
-        System.out.println();
+        return currNode;
     }
 
     /**
-     * Remove data at the value
-     * @param list to which is remove data
-     * @param value data to remove
+     * Retrieves the element at the specified index.
+     *
+     * @param index the index of the element to retrieve
+     * @return the element at the specified index
+     * @throws IndexOutOfBoundsException if the index is out of bounds
      */
-    public static void removeByValue(LinkedListOwn list, int value) {
-
-        Node currNode = list.head, prev = null;
-
-        if (currNode != null && currNode.data == value) {
-            list.head = currNode.next;
-            System.out.println(value + " value find and remove");
-            return;
+    public T getElementByIndex(int index) {
+        if (index >= size) {
+            throw new IndexOutOfBoundsException();
         }
-        while (currNode != null && currNode.data != value) {
-            prev = currNode;
-            currNode = currNode.next;
-        }
-        if (currNode != null) {
-            prev.next = currNode.next;
-            System.out.println(value + " value not found");
-        }
-        if (currNode == null) {
-            System.out.println(value + " value not found");
-        }
+        return getNodeByIndex(index).data;
     }
 
     /**
-     * Remove data at the specified index
-     * @param list to which is remove data
-     * @param index index at which to remove the data
+     * Adds an element to the end of the list.
+     *
+     * @param element the element to be added
      */
-    public static void removeByIndex(LinkedListOwn list, int index) {
-        Node currNode = list.head, prev = null;
-
-        if (index == 0 && currNode != null) {
-            list.head = currNode.next;
-            System.out.println("data at index: " + index + " remove");
-            return;
-        }
-        int counter = 0;
-        while (currNode != null) {
-            if (counter == index) {
-                prev.next = currNode.next;
-                System.out.println("data at index: " + index + " remove");
-                break;
-            } else {
-                prev = currNode;
-                currNode = currNode.next;
-                counter++;
-            }
-        }
-        if (currNode == null) {
-            System.out.println(index + " index not found");
-        }
-    }
-
-    /**
-     * Removes all data from a linked list
-     * @param list to which is need remove all data
-     */
-    public static void clear(LinkedListOwn list) {
-        list.head = null;
-    }
-
-    /**
-     * Sorts a linked list in ascending order using the insertion method
-     * @param list to which is need sorting
-     */
-    public static void sortList(LinkedListOwn list) {
-        Node currNode = list.head, prev = null;
-        int tmp;
-
-        if (list.head == null) {
-            System.out.println("List is empty");
+    public void add(T element) {
+        Node<T> newNode = new Node<>(element);
+        if (head == null) {
+            head = newNode;
+            tail = newNode;
         } else {
-            while (currNode != null) {
-                prev = currNode.next;
-                while (prev != null) {
-                    if (currNode.data > prev.data) {
-                        tmp = currNode.data;
-                        currNode.data = prev.data;
-                        prev.data = tmp;
-                    }
-                    prev = prev.next;
+            tail.next = newNode;
+            newNode.prev = tail;
+            tail = newNode;
+        }
+        size++;
+    }
+
+    /**
+     * Adds an element at the specified index.
+     *
+     * @param index   the index at which the element should be added
+     * @param element the element to be added
+     * @throws IndexOutOfBoundsException if the index is out of bounds
+     */
+    public void addByIndex(int index, T element) {
+        if (index > size || index < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (index == size) {
+            add(element);
+        } else {
+            Node<T> newNode = new Node<>(element);
+            if (index == 0) {
+                newNode.next = head;
+                if (head != null) {
+                    head.prev = newNode;
                 }
-                currNode = currNode.next;
+                head = newNode;
+            } else {
+                Node<T> prevNode = getNodeByIndex(index - 1);
+
+                newNode.next = prevNode.next;
+                newNode.prev = prevNode;
+                prevNode.next = newNode;
+
+                if (newNode.next != null) {
+                    newNode.next.prev = newNode;
+                } else {
+                    tail = newNode;
+                }
+            }
+            size++;
+        }
+    }
+
+    /**
+     * Returns a string representation of the list.
+     *
+     * @return a string representation of the list
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        Node<T> currNode = head;
+        while (currNode != null) {
+            sb.append(currNode.data);
+            if (currNode.next != null) {
+                sb.append(" ");
+            }
+            currNode = currNode.next;
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Remove the specified node from the linked list.
+     *
+     * @param node the node to be deleted.
+     */
+    private void removeNode(Node<T> node) {
+        if (head == node) {
+            head = head.next;
+            if (head != null) {
+                head.prev = null;
+            } else {
+                tail = null;
+            }
+        } else if (tail == node) {
+            tail = tail.prev;
+            tail.next = null;
+        } else {
+            node.prev.next = node.next;
+            node.next.prev = node.prev;
+        }
+        --size;
+    }
+
+    /**
+     * Removes the node at the specified index.
+     *
+     * @param index the index of the node to be removed
+     * @throws IndexOutOfBoundsException if the index is out of bounds
+     */
+    public void removeByIndex(int index) {
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException();
+        }
+        Node<T> currNode = getNodeByIndex(index);
+        removeNode(currNode);
+    }
+
+    /**
+     * Clears the entire list.
+     */
+    public void clear() {
+        if (head != null) {
+            while (head.next != null) {
+                head.next = null;
+            }
+            head = null;
+        }
+    }
+
+    /**
+     * Sorts the list using the provided comparator.
+     *
+     * @param comparator the comparator to be used for sorting
+     */
+    public void sortList(Comparator<T> comparator) {
+        if (size > 1) {
+            for (Node<T> i = head; i != null; i = i.next) {
+                for (Node<T> j = i.next; j != null; j = j.next) {
+                    if (comparator.compare(i.data, j.data) > 0) {
+                        T tmp = i.data;
+                        i.data = j.data;
+                        j.data = tmp;
+                    }
+                }
             }
         }
     }
+
 
     public static void main(String[] args) {
 
-        LinkedListOwn list = new LinkedListOwn();
+        LinkedListOwn<Integer> list = new LinkedListOwn<>();
 
-        add(list, 1);
-        add(list, 2);
-        add(list, 3);
-        add(list, 4);
-        add(list, 5);
-        printList(list);
-        addByIndex(list, 2, 23);
-        printList(list);
+        list.add(10);
+        list.add(123);
+        list.add(45);
+        list.add(-12);
+        list.addByIndex(0, 20);
+        System.out.println(list.getElementByIndex(0));
+        System.out.println(list.toString());
 
-        System.out.println(getElementAtIndex(list, 2));
+        list.removeByIndex(2);
+        System.out.println(list.toString());
 
-        sortList(list);
-        printList(list);
-        clear(list);
+        list.clear();
+        System.out.println(list.toString());
 
-        LinkedListOwn list2 = new LinkedListOwn();
+        list.add(1);
+        list.add(123);
+        list.add(0);
+        list.add(-12);
+        list.add(25);
+        list.add(-123);
+        System.out.println(list.toString());
 
-        add(list2, 4);
-        add(list2, 2);
-        add(list2, 1);
-        add(list2, 3);
-        add(list2, 10);
-        printList(list2);
+        list.sortList(Comparator.reverseOrder());
+        System.out.println(list.toString());
 
-        removeByValue(list2, 4);
-        printList(list2);
 
-        LinkedListOwn list1 = new LinkedListOwn();
-
-        add(list1, 1);
-        add(list1, 2);
-        add(list1, 3);
-        add(list1, 4);
-        add(list1, 5);
-        add(list1, 6);
-        add(list1, 7);
-        add(list1, 8);
-        printList(list1);
-
-        removeByIndex(list1, 0);
-        printList(list1);
-
-        removeByIndex(list1, 2);
-        printList(list1);
-
-        removeByIndex(list1, 10);
-        printList(list1);
     }
 }
 
