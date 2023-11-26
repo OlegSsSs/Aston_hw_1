@@ -91,8 +91,7 @@ public class ArrayListOwn<E> {
      * Clears the list by remove all elements
      */
     public void clear() {
-//        Arrays.fill(arrayData, null);
-        arrayData = new Object[DEFAULT_CAPACITY_ELEMENTS];
+        Arrays.fill(arrayData, null);
         size = 0;
     }
 
